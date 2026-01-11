@@ -31,4 +31,24 @@ jobs:
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/devops-jr-app:latest    
 
+
+  deploy-to-azure:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Login en Azure
+        uses: azure/login@v2
+        with: 
+          creds: ${{ secrets.AZURE_CREDENTIALS}}
+
+      - name: Reiniciar Web App (forzar pull de imagen) 
+        uses: azure/cli@v2
+        with: 
+          inlineScript: | 
+            az webapp restart \
+              --name webapp-devops-jr-123 \
+              --resource-group rg-devops-jr
+
+
      
